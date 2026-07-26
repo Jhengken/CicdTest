@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Counter";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Counter</h1>
+    <p class="lead">Use the buttons below to change the count.</p>
+
+    <div class="my-4">
+        <span class="fs-1 fw-bold" id="counter-value">0</span>
+    </div>
+
+    <div class="btn-group" role="group" aria-label="Counter controls">
+        <button type="button" class="btn btn-primary" id="decrement-btn">-1</button>
+        <button type="button" class="btn btn-secondary" id="reset-btn">Reset</button>
+        <button type="button" class="btn btn-primary" id="increment-btn">+1</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            let count = 0;
+            const counterValue = document.getElementById('counter-value');
+            const incrementBtn = document.getElementById('increment-btn');
+            const decrementBtn = document.getElementById('decrement-btn');
+            const resetBtn = document.getElementById('reset-btn');
+
+            const render = () => {
+                counterValue.textContent = count.toString();
+            };
+
+            incrementBtn.addEventListener('click', () => {
+                count += 1;
+                render();
+            });
+
+            decrementBtn.addEventListener('click', () => {
+                count -= 1;
+                render();
+            });
+
+            resetBtn.addEventListener('click', () => {
+                count = 0;
+                render();
+            });
+
+            render();
+        })();
+    </script>
+}
+
