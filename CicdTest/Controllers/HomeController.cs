@@ -21,6 +21,17 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Hello()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Hello([FromBody] object _)
+    {
+        return Json(new { message = "Hello world" });
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

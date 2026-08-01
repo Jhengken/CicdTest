@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Hello";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Hello</h1>
+    <p class="lead">Click the button to fetch a message from the server.</p>
+
+    <div class="my-4">
+        <button type="button" class="btn btn-primary" id="fetch-btn">Get Message</button>
+    </div>
+
+    <div id="message-output" class="fs-3 fw-bold"></div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('fetch-btn').addEventListener('click', () => {
+            fetch('@Url.Action("Hello", "Home")', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message-output').textContent = data.message;
+            });
+        });
+    </script>
+}
