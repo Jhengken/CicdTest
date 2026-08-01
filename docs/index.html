@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hello API Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: #888;
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+
+    .api-url-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .api-url-group input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #444;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .api-url-group input:focus {
+      border-color: #667eea;
+    }
+
+    button {
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .result-box {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      display: none;
+      word-break: break-all;
+    }
+
+    .result-box.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+      display: block;
+    }
+
+    .result-box.error {
+      background: #fce4ec;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+      display: block;
+    }
+
+    .spinner {
+      display: none;
+      margin: 16px auto 0;
+      width: 28px;
+      height: 28px;
+      border: 3px solid #ddd;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🌐 Hello API Demo</h1>
+    <p class="subtitle">呼叫後端 POST API 並顯示回傳結果</p>
+
+    <div class="api-url-group">
+      <input
+        type="text"
+        id="apiUrl"
+        placeholder="API URL，例如 http://localhost:5194/Home/Hello"
+        value="http://localhost:5194/Home/Hello"
+      />
+      <button id="callBtn" onclick="callApi()">Call API</button>
+    </div>
+
+    <div class="spinner" id="spinner"></div>
+    <div class="result-box" id="resultBox"></div>
+  </div>
+
+  <script>
+    async function callApi() {
+      const url = document.getElementById('apiUrl').value.trim();
+      const btn = document.getElementById('callBtn');
+      const spinner = document.getElementById('spinner');
+      const resultBox = document.getElementById('resultBox');
+
+      if (!url) {
+        showResult('請輸入 API URL', false);
+        return;
+      }
+
+      btn.disabled = true;
+      spinner.style.display = 'block';
+      resultBox.className = 'result-box';
+      resultBox.style.display = 'none';
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const message = data.message ?? JSON.stringify(data);
+        showResult(`✅ ${message}`, true);
+      } catch (err) {
+        showResult(`❌ 錯誤：${err.message}`, false);
+      } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+      }
+    }
+
+    function showResult(text, isSuccess) {
+      const box = document.getElementById('resultBox');
+      box.style.display = '';
+      box.textContent = text;
+      box.className = 'result-box ' + (isSuccess ? 'success' : 'error');
+    }
+
+    // 支援按 Enter 觸發
+    document.getElementById('apiUrl').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') callApi();
+    });
+  </script>
+</body>
+</html>
+
